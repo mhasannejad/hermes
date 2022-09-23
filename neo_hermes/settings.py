@@ -31,7 +31,7 @@ if env('MODE') == 'DEBUG':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [env('HOST')]
 
 # Application definition
 CORS_ALLOWED_ORIGINS = [

@@ -211,7 +211,23 @@ def allSkills(request):
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@professor_only
+def allAppointments(request):
+    user = User.objects.get(id=request.user.id)
+    received = Appointment.objects.filter(professor=user).filter(state=0).order_by('-id')
+    rejected = Appointment.objects.filter(professor=user).filter(state=2).order_by('-id')
+    accepted = Appointment.objects.filter(professor=user).filter(state=1).order_by('-id')
+    return Response(
+        {
+            'received':AppointmentSerializer(received, many=True).data,
+            'rejected':AppointmentSerializer(rejected, many=True).data,
+            'accepted':AppointmentSerializer(accepted, many=True).data,
+        }, status=status.HTTP_200_OK
+    )
+
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @professor_only
 def allAppointmentsAccepted(request):
@@ -235,63 +251,60 @@ def allAppointmentsRejected(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def setUpAppointment(request):
-    appointment = Appointment.objects.get(id=request.POST['appointment_id'])
-    appointment.time = request.POST['time']
+    appointment = Appointment.objects.get(id=request.data['appointment_id'])
+    appointment.time = request.data['time']
     appointment.state = 1
     appointment.save()
     date_in_persian = JalaliDate.fromtimestamp(int(appointment.time)).strftime("%Y/%m/%d")
-    context = {
-        'subject': appointment.title,
-        'content': f"""
-                    روز بخیر  {appointment.student.name} \n
-                    استاد {appointment.professor.name} درخواست ملاقات شمارا پذیرفتند.
-                    در تاریخ {date_in_persian} میتوانید به دفتر ایشان مراجعه کنید.  
-                    
-                """
-    }
-    message = get_template('layouts/mail/email_layout.html').render(context)
-    msg = EmailMessage(
-        appointment.title,
-        message,
-        'notification@gethermes.ir',
-        [appointment.student.email],
-    )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
+    # context = {
+    #     'subject': appointment.title,
+    #     'content': f"""
+    #                 روز بخیر  {appointment.student.name} \n
+    #                 استاد {appointment.professor.name} درخواست ملاقات شمارا پذیرفتند.
+    #                 در تاریخ {date_in_persian} میتوانید به دفتر ایشان مراجعه کنید.
+    #
+    #             """
+    # }
+    # message = get_template('layouts/mail/email_layout.html').render(context)
+    # msg = EmailMessage(
+    #     appointment.title,
+    #     message,
+    #     'notification@gethermes.ir',
+    #     [appointment.student.email],
+    # )
+    # msg.content_subtype = "html"  # Main content is now text/html
+    # msg.send()
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def rejectAppointment(request):
-    appointment = Appointment.objects.get(id=request.POST['appointment_id'])
+    appointment = Appointment.objects.get(id=request.data['appointment_id'])
 
     appointment.state = 2
     appointment.save()
-    date_in_persian = JalaliDate.fromtimestamp(int(appointment.time)).strftime("%Y/%m/%d")
-    context = {
-        'subject': appointment.title,
-        'content': f"""
-                        روز بخیر  {appointment.student.name} \n
-                        استاد {appointment.professor.name} درخواست ملاقات شمارا رد کردند.
-
-                    """
-    }
-    message = get_template('layouts/mail/email_layout.html').render(context)
-    msg = EmailMessage(
-        appointment.title,
-        message,
-        'notification@gethermes.ir',
-        ['business.hasannejad@gmail.com'],
-    )
-    msg.content_subtype = "html"  # Main content is now text/html
-    msg.send()
+    # context = {
+    #     'subject': appointment.title,
+    #     'content': f"""
+    #                     روز بخیر  {appointment.student.name} \n
+    #                     استاد {appointment.professor.name} درخواست ملاقات شمارا رد کردند.
+    #
+    #                 """
+    # }
+    # message = get_template('layouts/mail/email_layout.html').render(context)
+    # msg = EmailMessage(
+    #     appointment.title,
+    #     message,
+    #     'notification@gethermes.ir',
+    #     ['business.hasannejad@gmail.com'],
+    # )
+    # msg.content_subtype = "html"  # Main content is now text/html
+    # msg.send()
     return Response(status=status.HTTP_200_OK)
 
 

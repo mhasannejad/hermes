@@ -1,6 +1,5 @@
 import base64
 
-from django.contrib.auth import authenticate
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
@@ -33,7 +32,6 @@ def getAllUserAppointments(request):
     appointments = Appointment.objects.filter(student=request.user).order_by('-time')
     sr = AppointmentSerializer(appointments, many=True)
     return Response(sr.data)
-
 
 
 @api_view(['GET'])
@@ -315,18 +313,20 @@ def getAnnounceDetails(request, id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def addAnnounceRequest(request):
-    announce = AnnounceRequestSerializerInsert(data=request.POST)
-    if announce.is_valid():
-        announce.save()
+    announce, created = AnnounceRequest.objects.get_or_create(
+        student=request.user,
+        announce_id=request.data['announce_id'],
+        description=request.data['description']
+    )
+    if created:
         return Response(
-            status=status.HTTP_200_OK
+            status=status.HTTP_201_CREATED
         )
     else:
         return Response(
-            announce.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            status=status.HTTP_200_OK
         )
 
 

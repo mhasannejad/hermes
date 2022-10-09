@@ -2,8 +2,6 @@ import base64
 
 from django.contrib.auth import authenticate
 from django.core.files.base import ContentFile
-from django.core.mail import EmailMessage
-from django.template.loader import get_template
 from persiantools.jdatetime import JalaliDate
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -220,9 +218,9 @@ def allAppointments(request):
     accepted = Appointment.objects.filter(professor=user).filter(state=1).order_by('-id')
     return Response(
         {
-            'received':AppointmentSerializer(received, many=True).data,
-            'rejected':AppointmentSerializer(rejected, many=True).data,
-            'accepted':AppointmentSerializer(accepted, many=True).data,
+            'received': AppointmentSerializer(received, many=True).data,
+            'rejected': AppointmentSerializer(rejected, many=True).data,
+            'accepted': AppointmentSerializer(accepted, many=True).data,
         }, status=status.HTTP_200_OK
     )
 
@@ -248,6 +246,21 @@ def allAppointmentsRejected(request):
     return Response(
         AppointmentSerializer(appointments, many=True).data, status=status.HTTP_200_OK
     )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@professor_only
+def buildNewAppointment(request):
+    appointment = Appointment.objects.create(
+        title=request.data['title'],
+        description=request.data['description'],
+        time=request.data['time'],
+        state=1,
+        professor_id=request.user.id,
+        student_id=request.data['student_id']
+    )
+    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -407,7 +420,6 @@ def allAnnounces(request):
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def allMyAnnounces(request):
@@ -418,7 +430,6 @@ def allMyAnnounces(request):
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def getAnnounceDetails(request, id):
@@ -472,24 +483,29 @@ def addPostImage(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def addAnnounce(request):
     announce = Announce.objects.create(
-        title=request.POST['title'],
-        body=request.POST['body'],
+        title=request.data['title'],
+        body=request.data['body'],
         date=time.time() * 1000,
         user=request.user
     )
 
-    cover_data = request.POST['cover']
-    cover_ext = request.POST['cover_ext']
-    cover = ContentFile(base64.b64decode(cover_data))
-    cover_name = f'{time.time()}' + cover_ext
-    announce.cover.save(cover_name, cover, save=True)
-    print(request.POST['skills'])
-    for i in str(request.POST['skills']).split(','):
+    cover_data = request.data['cover']
+    with open('c.txt', 'w') as f:
+        f.write(cover_data)
+    # cover = ContentFile(base64.b64decode(cover_data))
+
+    format, imgstr = cover_data.split(';base64,')
+    ext = format.split('/')[-1]
+    cover_name = f'{int(time.time())}.{ext}'
+    data = ContentFile(base64.b64decode(imgstr))
+
+    announce.cover.save(cover_name, data, save=True)
+    print(request.data['skills'])
+    for i in str(request.data['skills']).split(','):
         if len(Skill.objects.filter(name__contains=i)) == 0:
             skill = Skill.objects.create(
                 name=i

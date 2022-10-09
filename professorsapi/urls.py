@@ -39,6 +39,7 @@ urlpatterns = [
     path('requests/mine/', allMyRequests),
 
     path('appointments/setup/', setUpAppointment),
+    path('appointments/build/', buildNewAppointment),
     path('appointments/reject/', rejectAppointment),
 
     path('announces/<int:id>/', getAnnounceDetails),

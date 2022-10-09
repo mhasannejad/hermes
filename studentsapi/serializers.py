@@ -110,13 +110,22 @@ class UserSerializerListItem2(ModelSerializer):
         fields = ['id', 'name', 'family', 'email', 'expertise', 'avatar', 'location', 'phone', 'bio', 'official_name']
 
 
+class AnnounceRequestSerializer(ModelSerializer):
+    student = UserSerializerListItem2()
+
+    class Meta:
+        model = AnnounceRequest
+        fields = ['id', 'description', 'student']
+
+
 class AnnounceSerializerList(ModelSerializer):
     user = UserSerializerListItem2(many=False)
     skills = SkillSerializer(many=True)
+    requests = AnnounceRequestSerializer(many=True)
 
     class Meta:
         model = Announce
-        fields = ['id', 'title', 'body', 'cover', 'date', 'user', 'skills']
+        fields = ['id', 'title', 'body', 'cover', 'date', 'user', 'skills', 'requests']
 
 
 class UserSerializerProfile(ModelSerializer):
@@ -176,12 +185,6 @@ class StudentProfileSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ['id']
-
-
-class AnnounceRequestSerializer(ModelSerializer):
-    class Meta:
-        model = AnnounceRequest
-        fields = '__all__'
 
 
 class AnnounceRequestSerializerDetailed(ModelSerializer):

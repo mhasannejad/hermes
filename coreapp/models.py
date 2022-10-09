@@ -275,6 +275,10 @@ class Announce(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     skills = models.ManyToManyField(Skill)
 
+    @property
+    def requests(self):
+        return self.announcerequest_set.all()
+
 
 class AnnounceRequest(models.Model):
     description = models.TextField(max_length=100, null=True, )

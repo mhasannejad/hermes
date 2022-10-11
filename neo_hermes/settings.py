@@ -48,6 +48,7 @@ CORS_ALLOW_METHODS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,6 +74,7 @@ THUMBNAIL_ALIASES = {
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,8 +84,6 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
 ]
-
-
 
 ROOT_URLCONF = 'neo_hermes.urls'
 
@@ -161,15 +161,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.gethermes.ir'
 EMAIL_HOST_USER = 'notification@gethermes.ir'
 EMAIL_HOST_PASSWORD = '+=]WcV#k(yS4'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

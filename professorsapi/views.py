@@ -252,7 +252,7 @@ def allAppointmentsRejected(request):
 @permission_classes([IsAuthenticated])
 @professor_only
 def buildNewAppointment(request):
-    appointment = Appointment.objects.create(
+    Appointment.objects.create(
         title=request.data['title'],
         description=request.data['description'],
         time=request.data['time'],
@@ -494,9 +494,7 @@ def addAnnounce(request):
     )
 
     cover_data = request.data['cover']
-    with open('c.txt', 'w') as f:
-        f.write(cover_data)
-    # cover = ContentFile(base64.b64decode(cover_data))
+
 
     format, imgstr = cover_data.split(';base64,')
     ext = format.split('/')[-1]

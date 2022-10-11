@@ -121,10 +121,11 @@ def updatePassword(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def updateAvatar(request):
-    image_data = request.POST['avatar']
-    ext = request.POST['ext']
+    cover_data = request.data['avatar']
 
-    data = ContentFile(base64.b64decode(image_data))
+    format, imgstr = cover_data.split(';base64,')
+    ext = format.split('/')[-1]
+    data = ContentFile(base64.b64decode(imgstr))
 
     file_name = f'{time.time()}' + ext
     request.user.avatar.save(file_name, data, save=True)  # image is User's model field
@@ -397,6 +398,17 @@ def filterPostsByText(request):
 def filterProfessorsByText(request):
     search_term = request.POST['search_term']
     profs = User.objects.filter(name__contains=search_term).filter(mode=2)
+    return Response(
+        UserSerializerListItem(profs, many=True).data, status=status.HTTP_200_OK
+    )
+
+
+@api_view(['POST'])
+def fullTextSearchProfessor(request):
+    search_term = request.data['search_term']
+    profs = User.objects.filter(
+        Q(name__contains=search_term) | Q(family__contains=search_term) | Q(expertise__name__contains=search_term) | Q(
+            location__name__contains=search_term)).filter(mode=2)
     return Response(
         UserSerializerListItem(profs, many=True).data, status=status.HTTP_200_OK
     )

@@ -32,6 +32,7 @@ urlpatterns = [
     path('announce/all/', allAnnounces),
     path('filter/all/', getPostFilters),
     path('filter/all/professors/', getProfessorFilters),
+    path('search/professors/', fullTextSearchProfessor),
     path('filter/all/announces/', getAnnounceFilters),
     path('announce/<int:id>/', getAnnounceDetails),
     path('mydata/', userData),

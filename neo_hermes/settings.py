@@ -161,8 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, "media")
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.gethermes.ir'
 EMAIL_HOST_USER = 'notification@gethermes.ir'

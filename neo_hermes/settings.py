@@ -32,10 +32,10 @@ else:
     DEBUG = False
 
 ALLOWED_HOSTS = [env('HOST')]
-
+CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 CORS_ALLOWED_ORIGINS = [
-    env('FRONTEND_URL'),
+    env('FRONTEND_URL')
 ]
 
 CORS_ALLOW_METHODS = [
@@ -48,7 +48,6 @@ CORS_ALLOW_METHODS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,7 +73,6 @@ THUMBNAIL_ALIASES = {
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

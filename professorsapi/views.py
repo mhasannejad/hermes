@@ -211,6 +211,16 @@ def allSkills(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 @professor_only
+def allContacts(request):
+    user = User.objects.get(id=request.user.id)
+    return Response(
+        ContactSerializer(user.contact_set.all(), many=True).data, status=status.HTTP_200_OK
+    )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@professor_only
 def allAppointments(request):
     user = User.objects.get(id=request.user.id)
     received = Appointment.objects.filter(professor=user).filter(state=0).order_by('-id')
@@ -396,7 +406,6 @@ def allLocations(request):
 ### contact types
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def allContactTypes(request):
@@ -495,7 +504,6 @@ def addAnnounce(request):
 
     cover_data = request.data['cover']
 
-
     format, imgstr = cover_data.split(';base64,')
     ext = format.split('/')[-1]
     cover_name = f'{int(time.time())}.{ext}'
@@ -517,15 +525,14 @@ def addAnnounce(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def addContact(request):
     user = User.objects.get(id=request.user.id)
-    contact_type = ContactType.objects.get(id=request.POST['type_id'])
-    contact = Contact.objects.create(
-        name=request.POST['name'],
-        value=request.POST['value'],
+    contact_type = ContactType.objects.get(id=request.data['type_id'])
+    Contact.objects.create(
+        name=request.data['name'],
+        value=request.data['value'],
         owner=user,
         type=contact_type
     )

@@ -31,6 +31,7 @@ urlpatterns = [
     path('locations/all/', allLocations),
     path('contacttypes/all/', allContactTypes),
     path('skills/all/', allSkills),
+    path('contacts/all/', allContacts),
     path('appointments/all/', allAppointments),
     path('appointments/all/accepted/', allAppointmentsAccepted),
     path('appointments/all/rejected/', allAppointmentsRejected),

@@ -1,7 +1,6 @@
-import time
-from django.db import models
-from accounts.models import *
 from django.conf import settings
+
+from accounts.models import *
 
 
 # Create your models here.
@@ -177,8 +176,8 @@ class User(AbstractBaseUser):
 
     @property
     def official_name(self):
-        if self.mode==2:
-            return 'dr. ' + self.name +' '+ self.family
+        if self.mode == 2:
+            return 'dr. ' + self.name + ' ' + self.family
         else:
             return ''
 
@@ -284,3 +283,7 @@ class AnnounceRequest(models.Model):
     description = models.TextField(max_length=100, null=True, )
     announce = models.ForeignKey(Announce, on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    @property
+    def professor(self):
+        return self.announce.user

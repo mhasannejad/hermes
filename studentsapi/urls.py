@@ -8,6 +8,8 @@ urlpatterns = [
     path('appointments/mine/', getAllUserAppointments),
     path('appointments/create/', addAppointment),
     path('announcerequest/create/', addAnnounceRequest),
+    path('announcerequest/mine/', getMyAnnounceRequests),
+    path('announcerequest/delete/<int:id>/', deleteAnnounceRequest),
     path('appointments/delete/<int:id>/', deleteAppointment),
     path('appointments/<int:id>/', getAppointment),
     path('appointments/user/<int:id>/', getAppointmentForUser),

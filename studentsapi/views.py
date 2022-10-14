@@ -178,7 +178,7 @@ def getProfessors(request):
 def mainPage(request):
     main_page = Setting.objects.get(key=settings.MAIN_PAGE_PROFS_DISPLAY_LOCATION)
     location = Location.objects.get(id=main_page.value)
-    profs = User.objects.filter(location=location).filter(mode=User.MODES[2][0])
+    profs = User.objects.filter(mode=User.MODES[2][0])
     sr = UserSerializerListItem(profs, many=True)
     return Response(
         {
@@ -329,6 +329,26 @@ def addAnnounceRequest(request):
         return Response(
             status=status.HTTP_200_OK
         )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyAnnounceRequests(request):
+    reqs = AnnounceRequest.objects.filter(student=request.user)
+
+    return Response(AnnounceRequestSerializer(reqs, many=True).data,
+                    status=status.HTTP_200_OK
+                    )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def deleteAnnounceRequest(request, id):
+    announce = AnnounceRequest.objects.get(id=id)
+    announce.delete()
+    return Response(
+        status=status.HTTP_200_OK
+    )
 
 
 @api_view(['GET'])

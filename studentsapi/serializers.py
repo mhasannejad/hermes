@@ -110,12 +110,23 @@ class UserSerializerListItem2(ModelSerializer):
         fields = ['id', 'name', 'family', 'email', 'expertise', 'avatar', 'location', 'phone', 'bio', 'official_name']
 
 
+class AnnounceSerializerList2(ModelSerializer):
+    user = UserSerializerListItem2(many=False)
+    skills = SkillSerializer(many=True)
+
+    class Meta:
+        model = Announce
+        fields = ['id', 'title', 'body', 'cover', 'date', 'user', 'skills']
+
+
 class AnnounceRequestSerializer(ModelSerializer):
     student = UserSerializerListItem2()
+    professor = UserSerializerListItem2()
+    announce = AnnounceSerializerList2()
 
     class Meta:
         model = AnnounceRequest
-        fields = ['id', 'description', 'student']
+        fields = ['id', 'description', 'student', 'professor', 'announce']
 
 
 class AnnounceSerializerList(ModelSerializer):

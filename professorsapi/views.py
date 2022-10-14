@@ -131,12 +131,11 @@ def deleteReference(request, id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def updateLocation(request):
     user = request.user
-    location = Location.objects.get(id=request.POST['location_id'])
+    location = Location.objects.get(id=request.data['location_id'])
     user.location = location
     user.save()
     return Response(
@@ -393,7 +392,6 @@ def getPostDetails(request, id):
 ### locations
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @professor_only
 def allLocations(request):
